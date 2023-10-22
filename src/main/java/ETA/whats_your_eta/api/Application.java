@@ -1,4 +1,4 @@
-package ETA.what.syoureta;
+package ETA.whats_your_eta.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
