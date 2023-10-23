@@ -28,8 +28,8 @@ public class OAuthAttributes {
         switch (provider) {
             case "google":
                 return ofGoogle(userNameAttributeName, attributes);
-//            case "kakao":
-//                return ofKakao("email", attributes);
+            case "kakao":
+                return ofKakao("email", attributes);
             default:
                 throw new RuntimeException();
         }
@@ -44,15 +44,24 @@ public class OAuthAttributes {
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
-//    private static OAuthAttributes ofKakao(String email, Map<String, Object> attributes) {
-//    }
+    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+        Map<String, Object> response = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> account = (Map<String, Object>) attributes.get("profile");
+
+        return OAuthAttributes.builder()
+                .name((String) account.get("nickname"))
+                .email((String) response.get("email"))
+                .attributes(response)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
+    }
 
     // OAuth에서 엔티티를 생성하는 시점: 처음 가입할 때
     public User toEntity() {
         return User.builder()
                 .name(name)
                 .email(email)
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .build();
     }
 }
