@@ -2,9 +2,7 @@ package ETA.whats_your_eta.api.config.auth.dto;
 
 import ETA.whats_your_eta.api.domain.user.Role;
 import ETA.whats_your_eta.api.domain.user.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Map;
 
@@ -23,6 +21,8 @@ public class OAuthAttributes {
         this.name = name;
         this.email = email;
     }
+
+    //public static class OAuthAttributesBuilder {}
 
     public static OAuthAttributes of(String provider, String userNameAttributeName, Map<String, Object> attributes) {
         switch (provider) {
