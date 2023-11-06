@@ -34,12 +34,22 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String name;
 
-    @Column(length = 64)
-    private String nickname;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    // W or M
+    @Column
+    private Character sex;
+
+    @Column(length = 3)
+    private Integer height;
+
+    @Column(length = 3)
+    private Integer weight;
+
+    @Column
+    private GoalLevel goalLevel;
 
     @CreatedDate
     @Column(updatable = false, name = "created_date")
