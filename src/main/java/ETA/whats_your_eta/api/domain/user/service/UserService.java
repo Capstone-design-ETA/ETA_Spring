@@ -1,17 +1,19 @@
 package ETA.whats_your_eta.api.domain.user.service;
 
+import ETA.whats_your_eta.api.config.security.JwtUtil;
 import ETA.whats_your_eta.api.domain.user.Role;
 import ETA.whats_your_eta.api.domain.user.User;
 import ETA.whats_your_eta.api.domain.user.dto.UserRequestDto;
 import ETA.whats_your_eta.api.domain.user.dto.UserResponseDto;
 import ETA.whats_your_eta.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -19,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
 
     protected final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Transactional(readOnly = true)
     public UserResponseDto.Information getMyInfo() {
@@ -59,5 +62,16 @@ public class UserService {
         }
 
         return (User) authentication.getPrincipal();
+    }
+
+    @GetMapping("/jwt-test")
+    public UserResponseDto.Information jwtTest(@RequestParam String accessToken) {
+        String email = jwtUtil.getUid(accessToken);
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."
+                )
+        );
+        return UserResponseDto.Information.of(user);
     }
 }

@@ -48,47 +48,57 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .getAuthority(); // Role을 가져온다.
 
 
-        // 회원이 존재할 경우
+        if (!(userOptional.isPresent())) {
+            User user = new User();
+            user.setEmail(email);
+            user.setName(authentication.getName());
+            user.setRole(Role.GUEST);
+            userRepository.save(user);
+        }
+
+        GeneratedToken token = jwtUtil.generateToken(email, role);
+        log.info("jwtToken = {}", token.getAccessToken());
+
+        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/api/user/jwt-test")
+                .queryParam("accessToken", token.getAccessToken())
+                .build()
+                .encode(StandardCharsets.UTF_8)
+                .toUriString();
+        log.info("redirect 준비");
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+    }
+
+
+/*        // 회원이 존재할 경우
         if (userOptional.isPresent()) {
 
             // jwt token 발행을 시작한다.
             GeneratedToken token = jwtUtil.generateToken(email, role);
-            log.info("jwtToken = {}", token.getAccessToken());
+            log.info("존재하는 회원의 jwtToken = {}", token.getAccessToken());
 
             // accessToken을 쿼리 스트링에 담는 url을 만든다.
-            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/loginSuccess")
+            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/api/user/jwt-test")
                     .queryParam("accessToken", token.getAccessToken())
                     .build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
-            log.info("redirect 준비");
+            log.info("존재하는 회원 redirect 준비");
             // 로그인 확인 페이지로 리다이렉트 시킨다.
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         } else { // 회원이 존재하지 않을 경우
 
-            User user = userRepository.save(
-                    User.builder()
-                            .role(Role.GUEST)
-                            .email(email)
-                            .name((String) oAuth2User.getAttribute("name"))
-                            .build()
-            );
-
-            // jwt token 발행을 시작한다.
-            GeneratedToken token = jwtUtil.generateToken(email, role);
-            log.info("jwtToken = {}", token.getAccessToken());
-
-            // accessToken을 쿼리 스트링에 담는 url을 만든다.
-            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/api/user/register")
-                    .queryParam("accessToken", token.getAccessToken())
+            // 서비스 제공자와 email을 쿼리 스트링에 담는 url을 만든다.
+            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/api/user/jwt-test")
+                    .queryParam("email", (String) oAuth2User.getAttribute("email"))
+                    .queryParam("provider", provider)
                     .build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
             log.info("redirect 준비");
-            // 사전 진단 페이지로 리다이렉트 시킨다.
+            // 회원 가입 페이지로 리다이렉트 시킨다.
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
         }
     }
-
+*/
 }

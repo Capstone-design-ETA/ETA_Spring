@@ -25,4 +25,10 @@ public class UserController {
     public ResponseEntity<UserResponseDto.Information> register(@RequestBody UserRequestDto.Register data) {
         return ResponseEntity.ok(userService.register(data));
     }
+
+    @GetMapping("/jwt-test")
+    @ResponseStatus(value = HttpStatus.OK)
+    public ResponseEntity<UserResponseDto.Information> jwtTest(@RequestParam String accessToken) {
+        return ResponseEntity.ok((userService.jwtTest(accessToken)));
+    }
 }
