@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter
 @Entity
@@ -29,9 +31,12 @@ public class Diary {
     @Pattern(regexp = "^\\d\\-(0[1-9]|1[012])$", message = "년월 형식(yyyy-MM)에 맞지 않습니다")
     private String date; // 받아 올 날짜
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(nullable = false)
+    private String content;
 
     @CreatedDate
     @Column(updatable = false, name = "created_at")
@@ -41,10 +46,11 @@ public class Diary {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt; // 일기 수정 시각
 
-    @Column(nullable = false)
-    private String content;
+    @OneToMany(mappedBy = "diary", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Image> images = new ArrayList<>();
 
-//    @ManyToOne
+
+//    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "dailyStatistic_id")
 //    private DailyStatistic dailyStatistic;
 }
