@@ -1,5 +1,6 @@
 package ETA.whats_your_eta.api.domain.diary;
 
+import ETA.whats_your_eta.api.domain.image.Image;
 import ETA.whats_your_eta.api.domain.user.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -46,8 +47,8 @@ public class Diary {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt; // 일기 수정 시각
 
-    @OneToMany(mappedBy = "diary", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Image> images = new ArrayList<>();
+    @Transient
+    private final List<Image> images = new ArrayList<>();
 
 
 //    @ManyToOne(fetch = FetchType.LAZY)
