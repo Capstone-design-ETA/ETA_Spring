@@ -23,17 +23,17 @@ public class DiaryController {
     private final DiaryService diaryService;
     private final S3Service s3Service;
 
-//    @GetMapping("/list")
-//    public Map<String, List<DiaryResponseDto>> getAllDiary() {
-//        return
-//    }
+    @GetMapping("/list")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<DiaryResponseDto.Info> getAllDiaries() {
+        return diaryService.getAllDiaries();
+    }
 
     @PostMapping("/upload")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Void> postDiary(@RequestPart("diaryContent") DiaryRequestDto postRequestDto,
                                            @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
         List<String> imgPaths = s3Service.upload(multipartFiles);
-        System.out.println("IMG 경로들 " + imgPaths);
         diaryService.uploadDiary(postRequestDto, imgPaths);
         return ResponseEntity.ok().build();
     }

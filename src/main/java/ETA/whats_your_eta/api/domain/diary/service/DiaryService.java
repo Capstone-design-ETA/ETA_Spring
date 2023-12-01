@@ -2,6 +2,7 @@ package ETA.whats_your_eta.api.domain.diary.service;
 
 import ETA.whats_your_eta.api.domain.diary.Diary;
 import ETA.whats_your_eta.api.domain.diary.dto.DiaryRequestDto;
+import ETA.whats_your_eta.api.domain.diary.dto.DiaryResponseDto;
 import ETA.whats_your_eta.api.domain.diary.repository.DiaryRepository;
 import ETA.whats_your_eta.api.domain.image.Image;
 import ETA.whats_your_eta.api.domain.image.repository.ImageRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,7 +25,19 @@ public class DiaryService {
     private final ImageRepository imageRepository;
     private final UserService userService;
 
-    // 일기 작성
+
+    // 현재 유저가 쓴 일기 목록 조회
+    @Transactional(readOnly = true)
+    public List<DiaryResponseDto.Info> getAllDiaries() {
+        User user = userService.getCurrentUser();
+
+        List<Diary> diaries = diaryRepository.findAllByUserId(user.getId());
+        return diaries.stream()
+                .map(DiaryResponseDto.Info::of)
+                .collect(Collectors.toList());
+    }
+
+    // 현재 유저 일기 작성
     @Transactional
     public void uploadDiary(DiaryRequestDto req, List<String> imgPaths) {
         User user = userService.getCurrentUser();
