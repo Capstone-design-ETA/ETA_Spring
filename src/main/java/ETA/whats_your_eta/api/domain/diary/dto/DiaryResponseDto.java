@@ -29,7 +29,7 @@ public class DiaryResponseDto {
                     .id(diary.getId())
                     .location(diary.getLocation())
                     .date(diary.getDate())
-                    .userName(diary.getUser().getUsername())
+                    .userName(diary.getUser().getName())
                     .createdAt(diary.getCreatedAt())
                     .modifiedAt(diary.getModifiedAt())
                     .content(diary.getContent())
