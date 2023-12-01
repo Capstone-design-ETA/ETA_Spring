@@ -1,7 +1,5 @@
 package ETA.whats_your_eta.api.config.oauth2;
 
-import ETA.whats_your_eta.api.domain.user.Role;
-import ETA.whats_your_eta.api.domain.user.User;
 import lombok.*;
 
 import java.util.HashMap;
@@ -32,6 +30,7 @@ public class OAuthAttributes {
 
     private static OAuthAttributes ofGoogle(String provider, String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttributes.builder()
+                .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
                 .provider(provider)
                 .attributes(attributes)
@@ -43,6 +42,7 @@ public class OAuthAttributes {
         Map<String, Object> kakaoProfile = (Map<String, Object>) attributes.get("profile");
 
         return OAuthAttributes.builder()
+                .name((String) kakaoAccount.get("name"))
                 .email((String) kakaoAccount.get("email"))
                 .provider(provider)
                 .attributes(kakaoAccount)
@@ -50,17 +50,11 @@ public class OAuthAttributes {
                 .build();
     }
 
-    //    // OAuth에서 엔티티를 생성하는 시점: 처음 가입할 때
-//    public User toEntity() {
-//        return User.builder()
-//                .name(name)
-//                .email(email)
-//                .role(Role.USER)
-//                .build();
     Map<String, Object> convertToMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", nameAttributeKey);
         map.put("key", nameAttributeKey);
+        map.put("name", name);
         map.put("email", email);
         map.put("provider", provider);
 
