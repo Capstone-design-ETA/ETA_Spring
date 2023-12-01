@@ -47,7 +47,7 @@ public class Diary {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt; // 일기 수정 시각
 
-    @Transient
+    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private final List<Image> images = new ArrayList<>();
 
 
