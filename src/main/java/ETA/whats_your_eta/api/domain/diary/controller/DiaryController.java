@@ -29,6 +29,7 @@ public class DiaryController {
         return diaryService.getAllDiaries();
     }
 
+
     @PostMapping("/upload")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Void> postDiary(@RequestPart("diaryContent") DiaryRequestDto postRequestDto,
@@ -36,5 +37,13 @@ public class DiaryController {
         List<String> imgPaths = s3Service.upload(multipartFiles);
         diaryService.uploadDiary(postRequestDto, imgPaths);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{diaryId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void updateDiary(@PathVariable Long diaryId,
+                                             @RequestPart("diaryContent") DiaryRequestDto updateRequestDto,
+                                             @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
+        diaryService.updateDiary(diaryId, updateRequestDto, multipartFiles);
     }
 }

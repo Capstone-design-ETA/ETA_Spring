@@ -91,4 +91,13 @@ public class S3Service {
         }
         return originalFilename.substring(originalFilename.lastIndexOf("."));
     }
+
+    public void delete(String url) {
+        try {
+            String fileName = url.substring(url.lastIndexOf("/") + 1);
+            s3Client.deleteObject(bucket + "/post/image", fileName);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다.");
+        }
+    }
 }
