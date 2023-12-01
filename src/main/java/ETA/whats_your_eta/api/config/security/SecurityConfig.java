@@ -3,7 +3,6 @@ package ETA.whats_your_eta.api.config.security;
 import ETA.whats_your_eta.api.config.oauth2.CustomOAuth2UserService;
 import ETA.whats_your_eta.api.config.oauth2.OAuth2FailureHandler;
 import ETA.whats_your_eta.api.config.oauth2.OAuth2SuccessHandler;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,6 +45,6 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // JWT 이용한 인증 처리 수행
 
-    return http.build();
+        return http.build();
     }
 }
