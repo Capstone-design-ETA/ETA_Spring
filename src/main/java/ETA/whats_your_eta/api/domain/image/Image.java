@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Getter
@@ -23,18 +24,6 @@ public class Image {
 
     @Column(nullable = false)
     private String url;
-
-    @Column
-    private Double latitude;
-
-    @Column
-    private Double longitude;
-
-    @Column
-    private String region;
-
-    @Column
-    private LocalDateTime captureTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "diary_id", nullable = false)
