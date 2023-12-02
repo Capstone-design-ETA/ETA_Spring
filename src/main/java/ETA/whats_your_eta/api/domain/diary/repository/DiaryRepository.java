@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
     List<Diary> findAllByUserId(Long userId);
+    List<Diary> findByLocationAndUserIdOrderByCreatedAtDesc(String location, Long userId);
+    Diary findFirstByLocationAndUserIdOrderByCreatedAtDesc(String location, Long userId);
 }
