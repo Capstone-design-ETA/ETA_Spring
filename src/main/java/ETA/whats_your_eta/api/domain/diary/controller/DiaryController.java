@@ -4,6 +4,7 @@ import ETA.whats_your_eta.api.domain.diary.Diary;
 import ETA.whats_your_eta.api.domain.diary.dto.DiaryRequestDto;
 import ETA.whats_your_eta.api.domain.diary.dto.DiaryResponseDto;
 import ETA.whats_your_eta.api.domain.diary.service.DiaryService;
+import ETA.whats_your_eta.api.domain.image.dto.ImageResponseDto;
 import ETA.whats_your_eta.api.domain.image.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,17 @@ public class DiaryController {
         return diaryService.getAllDiaries();
     }
 
+    @GetMapping("/{location}/list")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<DiaryResponseDto.Info> getDiariesByLocation(@PathVariable String location) {
+        return diaryService.getDiariesByLocation(location);
+    }
+
+    @GetMapping("/{location}/latest-image")
+    @ResponseStatus(value = HttpStatus.OK)
+    public ImageResponseDto getLatestDiaryFirstImageByLocation(@PathVariable String location) {
+        return diaryService.getLatestDiaryFirstImageByLocation(location);
+    }
 
     @PostMapping("/upload")
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -45,5 +57,11 @@ public class DiaryController {
                                              @RequestPart("diaryContent") DiaryRequestDto updateRequestDto,
                                              @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
         diaryService.updateDiary(diaryId, updateRequestDto, multipartFiles);
+    }
+
+    @DeleteMapping("/{diaryId}")
+    public ResponseEntity<Void> deleteDiary(@PathVariable Long diaryId) {
+        diaryService.deleteDiary(diaryId);
+        return ResponseEntity.noContent().build();
     }
 }

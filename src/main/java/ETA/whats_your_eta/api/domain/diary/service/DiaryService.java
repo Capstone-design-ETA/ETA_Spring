@@ -5,6 +5,7 @@ import ETA.whats_your_eta.api.domain.diary.dto.DiaryRequestDto;
 import ETA.whats_your_eta.api.domain.diary.dto.DiaryResponseDto;
 import ETA.whats_your_eta.api.domain.diary.repository.DiaryRepository;
 import ETA.whats_your_eta.api.domain.image.Image;
+import ETA.whats_your_eta.api.domain.image.dto.ImageResponseDto;
 import ETA.whats_your_eta.api.domain.image.repository.ImageRepository;
 import ETA.whats_your_eta.api.domain.image.service.S3Service;
 import ETA.whats_your_eta.api.domain.user.User;
@@ -38,6 +39,30 @@ public class DiaryService {
         return diaries.stream()
                 .map(DiaryResponseDto.Info::of)
                 .collect(Collectors.toList());
+    }
+
+    // 현재 사용자가 같은 위치에서 작성한 일기 목록 조회 (최신순)
+    @Transactional(readOnly = true)
+    public List<DiaryResponseDto.Info> getDiariesByLocation(String location) {
+        User user = userService.getCurrentUser();
+
+        List<Diary> diaries = diaryRepository.findByLocationAndUserIdOrderByCreatedAtDesc(location, user.getId());
+        return diaries.stream()
+                .map(DiaryResponseDto.Info::of)
+                .collect(Collectors.toList());
+    }
+
+    // 현재 사용자가 같은 위치에서 작성한 일기 목록 중 가장 최신 일기 대표 사진 조회
+    @Transactional(readOnly = true)
+    public ImageResponseDto getLatestDiaryFirstImageByLocation(String location) {
+        User user = userService.getCurrentUser();
+
+        Diary latestDiary = diaryRepository.findFirstByLocationAndUserIdOrderByCreatedAtDesc(location, user.getId());
+        if (latestDiary != null && !latestDiary.getImages().isEmpty()) {
+            Image firstImage = latestDiary.getImages().get(0);
+            return ImageResponseDto.of(firstImage);
+        }
+        throw new IllegalArgumentException("해당 위치와 사용자에 대한 최신 일기 혹은 이미지가 존재하지 않습니다.");
     }
 
     // 현재 유저 일기 작성
@@ -94,4 +119,26 @@ public class DiaryService {
             imageRepository.save(image);
         }
     }
+
+    // 현재 사용자의 특정 일기 삭제
+    @Transactional
+    public void deleteDiary(Long diaryId) {
+        User user = userService.getCurrentUser();
+
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new RuntimeException("일기를 찾을 수 없습니다."));
+
+        if (!(diary.getUser().getId().equals(user.getId()))) {
+            throw new IllegalArgumentException("다른 사용자의 일기는 수정할 수 없습니다.");
+        }
+
+        // 기존의 이미지를 S3에서 삭제
+        for (Image image : diary.getImages()) {
+            s3Service.delete(image.getUrl());
+        }
+
+        // 연관된 이미지들도 일기를 지우면 같이 지워짐(DB에서)
+        diaryRepository.delete(diary);
+    }
+
 }
