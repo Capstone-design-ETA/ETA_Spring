@@ -45,7 +45,7 @@ public class DailyStatisticsResponseDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class GetDailyStatisticsDto{
         private Long id;
-        private Long userId;
+//        private Long userId;
         private LocalDate date;
         private Integer steps;
         private List<CallRecordDto> callRecords;

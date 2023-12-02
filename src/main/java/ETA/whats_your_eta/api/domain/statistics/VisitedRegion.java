@@ -25,5 +25,5 @@ public class VisitedRegion {
 
     private String region;
 
-    private Float percentage;
+    private Double percentage;
 }

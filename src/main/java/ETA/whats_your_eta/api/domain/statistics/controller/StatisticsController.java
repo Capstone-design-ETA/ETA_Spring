@@ -3,11 +3,13 @@ package ETA.whats_your_eta.api.domain.statistics.controller;
 import ETA.whats_your_eta.api.domain.statistics.dto.DailyStatisticsRequestDto;
 import ETA.whats_your_eta.api.domain.statistics.dto.DailyStatisticsResponseDto.*;
 import ETA.whats_your_eta.api.domain.statistics.service.DailyStatisticsService;
+import ETA.whats_your_eta.api.domain.statistics.service.MonthlyStatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Date;
 
 @RestController
@@ -16,6 +18,7 @@ import java.util.Date;
 public class StatisticsController {
 
     private final DailyStatisticsService dailyStatisticsService;
+    private final MonthlyStatisticsService monthlyStatisticsService;
     /*
     일별통계 생성
      */
@@ -43,5 +46,13 @@ public class StatisticsController {
         GetDailyStatisticsDto getDailyStatisticsDto = dailyStatisticsService.findByDate(date);
 
         return ResponseEntity.ok(getDailyStatisticsDto);
+    }
+
+    /**
+     * 월별통계 조회 - 월별을 어떻게 받아올지
+     */
+    @PostMapping("/month/{month}")
+    public ResponseEntity<?> getMonthlyStatistics(@PathVariable YearMonth yearMonth){
+
     }
 }

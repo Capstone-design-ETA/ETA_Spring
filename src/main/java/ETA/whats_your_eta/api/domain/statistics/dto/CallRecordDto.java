@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CallRecordDto {
 
-    private Long userId;
     private LocalDateTime date;
     private String name; //상대방
     private Integer duration; //수정 필요
