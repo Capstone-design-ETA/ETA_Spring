@@ -12,6 +12,7 @@ import ETA.whats_your_eta.api.domain.user.User;
 import ETA.whats_your_eta.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,8 @@ public class DiaryService {
     private final UserService userService;
     private final S3Service s3Service;
 
+    @Value("${app.default-image-url}")
+    private String defaultImageUrl;
 
     // 현재 유저가 쓴 일기 목록 조회
     @Transactional(readOnly = true)
@@ -61,8 +64,12 @@ public class DiaryService {
         if (latestDiary != null && !latestDiary.getImages().isEmpty()) {
             Image firstImage = latestDiary.getImages().get(0);
             return ImageResponseDto.of(firstImage);
+        } else { // 이미지가 없으면 기본 이미지 반환
+            Image defaultImage = Image.builder()
+                    .url(defaultImageUrl)
+                    .build();
+            return ImageResponseDto.of(defaultImage);
         }
-        throw new IllegalArgumentException("해당 위치와 사용자에 대한 최신 일기 혹은 이미지가 존재하지 않습니다.");
     }
 
     // 현재 유저 일기 작성
