@@ -76,12 +76,14 @@ public class DiaryService {
         Diary savedDiary = diaryRepository.save(diary);
         log.info(String.valueOf(savedDiary));
 
-        for (String imgUrl : imgPaths) {
-            Image image = Image.builder()
-                    .url(imgUrl)
-                    .diary(savedDiary)
-                    .build();
-            imageRepository.save(image);
+        if (!imgPaths.isEmpty()) {
+            for (String imgUrl : imgPaths) {
+                Image image = Image.builder()
+                        .url(imgUrl)
+                        .diary(savedDiary)
+                        .build();
+                imageRepository.save(image);
+            }
         }
     }
 
@@ -97,17 +99,22 @@ public class DiaryService {
             throw new IllegalArgumentException("다른 사용자의 일기는 수정할 수 없습니다.");
         }
 
-        // 기존의 이미지를 S3에서 삭제하고 DB에서 삭제
-        for (Image image : diary.getImages()) {
-            s3Service.delete(image.getUrl());
+        // 기존 이미지가 있으면
+        if (!diary.getImages().isEmpty()) {
+            // 기존의 이미지를 S3에서 삭제하고 DB에서 삭제
+            for (Image image : diary.getImages()) {
+                s3Service.delete(image.getUrl());
+            }
+            imageRepository.deleteAllByDiaryIdInQuery(diaryId);
+            imageRepository.flush();
         }
-        imageRepository.deleteAllByDiaryIdInQuery(diaryId);
-        imageRepository.flush();
 
+        // 일기 재등록
         diary.setLocation(req.getLocation());
         diary.setDate(req.getDate());
         diary.setContent(req.getContent());
 
+        if(multipartFiles != null && !multipartFiles.isEmpty()) {
         // 새로운 이미지들 s3와 DB에 추가
         List<String> imgPaths = s3Service.upload(multipartFiles);
 
@@ -117,6 +124,7 @@ public class DiaryService {
                     .diary(diary)
                     .build();
             imageRepository.save(image);
+            }
         }
     }
 

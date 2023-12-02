@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,8 @@ public class DiaryController {
     @PostMapping("/upload")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Void> postDiary(@RequestPart("diaryContent") DiaryRequestDto postRequestDto,
-                                           @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
-        List<String> imgPaths = s3Service.upload(multipartFiles);
+                                           @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
+        List<String> imgPaths = multipartFiles != null ? s3Service.upload(multipartFiles) : new ArrayList<>();
         diaryService.uploadDiary(postRequestDto, imgPaths);
         return ResponseEntity.ok().build();
     }
@@ -55,7 +56,7 @@ public class DiaryController {
     @ResponseStatus(value = HttpStatus.OK)
     public void updateDiary(@PathVariable Long diaryId,
                                              @RequestPart("diaryContent") DiaryRequestDto updateRequestDto,
-                                             @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
+                                             @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
         diaryService.updateDiary(diaryId, updateRequestDto, multipartFiles);
     }
 
