@@ -1,6 +1,5 @@
 package ETA.whats_your_eta.api.domain.image.repository;
 
-import ETA.whats_your_eta.api.domain.diary.Diary;
 import ETA.whats_your_eta.api.domain.image.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
