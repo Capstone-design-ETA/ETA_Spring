@@ -10,10 +10,12 @@ import ETA.whats_your_eta.api.domain.statistics.repository.DailyStatisticsReposi
 import ETA.whats_your_eta.api.domain.user.User;
 import ETA.whats_your_eta.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Date;
 import java.util.List;
 
@@ -63,13 +65,20 @@ public class DailyStatisticsService {
     //일별통계 전체 조회(일단은 자동조회가 아니라 탭해서 보는걸로 기준) - 프론트에서 sqlite로 저장해서 쓴는게 나을 것 같지만 아직 프로젝트 규모가 작으므로 그냥
 //    매번 전체 조회에서 불러오는 걸로 하자
 //    사진이 있냐 없냐, 그리고 사진이 있으면 그 첫번쨰 사진만 받아오자
+/*
+    public GetMonthDto getMonthDailyImage(YearMonth yearMonth) {
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
 
-//    public GetMonthDto getMonthDailyImage(Integer month) {
-//
-//
-//    }
+         * TODO diary이미지로 갖고오기
 
-    //일별통계 상세조회 - date로 할지 id로 할지 고민
+        List<DailyStatistics> dailyStatistics = dailyStatisticsRepository.findByDateBetween(startDate, endDate);
+
+
+    }
+ */
+
+    //일별통계 상세조회 -
     //diary 추가
     public GetDailyStatisticsDto findByDate(LocalDate date) {
 
@@ -81,6 +90,9 @@ public class DailyStatisticsService {
                 .date(dailyStatistics.getDate())
                 .steps(dailyStatistics.getSteps())
 //                .callRecords(dailyStatistics.)
+                /**
+                 * TODO diary 추가
+                 */
                 .build();
     }
 

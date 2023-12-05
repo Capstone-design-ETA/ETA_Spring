@@ -12,6 +12,7 @@ import ETA.whats_your_eta.api.domain.statistics.repository.VisitedRegionReposito
 import ETA.whats_your_eta.api.domain.user.User;
 import ETA.whats_your_eta.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +31,22 @@ public class MonthlyStatisticsService {
     private final VisitedRegionRepository visitedRegionRepository;
     private final UserService userService;
 
-    //다음 월 1일 00:10가 되면 월별 통계 create - 스케줄러
+    //다음 월 1일 00:5이 되면 월별 통계 create - 스케줄러
+    @Scheduled(cron = "0 5 0 1 * ?", zone="Asia/Seoul")
     @Transactional
     public void createMonthlyStatistics() {
         LocalDate today = LocalDate.now();
         LocalDate firstDayOfLastMonth = today.minusMonths(1).with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfLastMonth = today.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
-        int lastMonthDays = lastDayOfLastMonth.getDayOfMonth();
+        int lastMonthDays = lastDayOfLastMonth.getDayOfMonth(); //저번달 총 일 수 구하기
 
-        User user = userService.getCurrentUser();
+        User user = userService.getCurrentUser(); //현재 유저 구하기
         YearMonth lastMonth = YearMonth.now().minusMonths(1); //저번 달 구하기
-
+        //저번달에 해당되는 daily 통계 찾고
+        //steps : 다 더하고 일수로 나누기(일단은 일수로 나눈다고생각, 데이터 존재 유무와 상관없이)
+        //locations : 일기에 있는 location 기준으로 counting
+        //most callers : call log는 나중에ㅎ
+        //visted region : region을 어디서 갖고오지? diary? 해당지역/총지역수 *100 = percentage, 각 region = region
 
     }
 

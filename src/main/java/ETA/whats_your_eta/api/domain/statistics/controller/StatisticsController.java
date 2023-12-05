@@ -2,6 +2,7 @@ package ETA.whats_your_eta.api.domain.statistics.controller;
 
 import ETA.whats_your_eta.api.domain.statistics.dto.DailyStatisticsRequestDto;
 import ETA.whats_your_eta.api.domain.statistics.dto.DailyStatisticsResponseDto.*;
+import ETA.whats_your_eta.api.domain.statistics.dto.MonthlyStatisticsResponseDto;
 import ETA.whats_your_eta.api.domain.statistics.service.DailyStatisticsService;
 import ETA.whats_your_eta.api.domain.statistics.service.MonthlyStatisticsService;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +31,15 @@ public class StatisticsController {
     }
 
     /*
-     통계 탭 전체 조회
+     통계 탭 전체 조회 - 이미지 썸네일 애매
      */
+    /*
     @GetMapping("/month")
     public ResponseEntity<GetMonthDto> getAllStatistics(@PathVariable Integer month){
         GetMonthDto getMonthDto = dailyStatisticsService.getMonthDailyImage(month);
         return ResponseEntity.ok(getMonthDto);
     }
+     */
 
     /*
     일별 통계 상세 조회
@@ -44,7 +47,6 @@ public class StatisticsController {
     @GetMapping("/{date}")
     public ResponseEntity<GetDailyStatisticsDto> getDailyStatistics(@PathVariable LocalDate date) {
         GetDailyStatisticsDto getDailyStatisticsDto = dailyStatisticsService.findByDate(date);
-
         return ResponseEntity.ok(getDailyStatisticsDto);
     }
 
@@ -52,7 +54,8 @@ public class StatisticsController {
      * 월별통계 조회 - 월별을 어떻게 받아올지
      */
     @PostMapping("/month/{month}")
-    public ResponseEntity<?> getMonthlyStatistics(@PathVariable YearMonth yearMonth){
-
+    public ResponseEntity<MonthlyStatisticsResponseDto.GetMonthlyStatisticsDto> getMonthlyStatistics(@PathVariable YearMonth yearMonth){
+        MonthlyStatisticsResponseDto.GetMonthlyStatisticsDto result = monthlyStatisticsService.getMonthlyStatistics(yearMonth);
+        return ResponseEntity.ok(result);
     }
 }
