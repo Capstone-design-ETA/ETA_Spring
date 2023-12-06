@@ -118,6 +118,8 @@ public class DiaryService {
 
         // 일기 재등록
         diary.setLocation(req.getLocation());
+        diary.setLatitude(req.getLatitude());
+        diary.setLongitude(req.getLongitude());
         diary.setDate(req.getDate());
         diary.setContent(req.getContent());
 

@@ -17,6 +17,8 @@ public class DiaryResponseDto {
     static public class Info {
         private Long id;
         private String location;
+        private Double latitude;
+        private Double longitude;
         private String date;
         private String userName;
         private LocalDateTime createdAt;
@@ -28,6 +30,8 @@ public class DiaryResponseDto {
             return Info.builder()
                     .id(diary.getId())
                     .location(diary.getLocation())
+                    .latitude(diary.getLatitude())
+                    .longitude(diary.getLongitude())
                     .date(diary.getDate())
                     .userName(diary.getUser().getName())
                     .createdAt(diary.getCreatedAt())
