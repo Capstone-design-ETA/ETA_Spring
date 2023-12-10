@@ -23,16 +23,18 @@ public class CallRecord {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "daily_id")
     private DailyStatistics dailyStatistics;
 
+    //탑3에 드는 call record만 해당
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MonthlyStatistics monthlyStatistics;
+
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime date; //몇시에 전화왔는지
 
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private Integer duration;
+    private int duration;
 
 }

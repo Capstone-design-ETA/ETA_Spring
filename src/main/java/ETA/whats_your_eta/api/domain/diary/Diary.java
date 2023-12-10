@@ -1,5 +1,7 @@
 package ETA.whats_your_eta.api.domain.diary;
 
+import ETA.whats_your_eta.api.domain.image.Image;
+import ETA.whats_your_eta.api.domain.statistics.DailyStatistics;
 import ETA.whats_your_eta.api.domain.user.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -28,7 +30,13 @@ public class Diary {
     private String location;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^\\d\\-(0[1-9]|1[012])$", message = "년월 형식(yyyy-MM)에 맞지 않습니다")
+    private Double latitude;
+
+    @Column(nullable = false)
+    private Double longitude;
+
+    @Column(nullable = false)
+    @Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$", message = "날짜 형식(yyyy-MM-dd)에 맞지 않습니다")
     private String date; // 받아 올 날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,11 +54,11 @@ public class Diary {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt; // 일기 수정 시각
 
-    @OneToMany(mappedBy = "diary", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Image> images = new ArrayList<>();
+    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final List<Image> images = new ArrayList<>();
 
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "dailyStatistic_id")
-//    private DailyStatistic dailyStatistic;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dailyStatistic_id")
+    private DailyStatistics dailyStatistic;
 }

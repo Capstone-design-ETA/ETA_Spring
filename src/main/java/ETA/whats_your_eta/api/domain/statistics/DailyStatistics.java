@@ -20,17 +20,19 @@ public class DailyStatistics {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @OneToMany
-//    @JoinColumn(name = "diary_id")
-//    private List<Diary> diary;
+    @OneToMany(mappedBy = "dailyStatistic")
+    private List<Diary> diary;
 
     @Column(nullable = false)
     private LocalDate date;
 
     @Column(nullable = false)
     private Integer steps;
+
+    @OneToMany(mappedBy = "dailyStatistics")
+    private List<CallRecord> callRecords;
 }

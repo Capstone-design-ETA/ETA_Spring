@@ -16,7 +16,6 @@ public class VisitedRegion {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "month_id")
     private MonthlyStatistics month;
 
     @ManyToOne

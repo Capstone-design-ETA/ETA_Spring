@@ -1,6 +1,7 @@
 package ETA.whats_your_eta.api.domain.statistics.dto;
 
 import ETA.whats_your_eta.api.domain.diary.Diary;
+import ETA.whats_your_eta.api.domain.diary.dto.DiaryResponseDto;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class DailyStatisticsResponseDto {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class GetMonthDto{
-        private List<DiaryImageDto> diaryImages;
+        private List<LocalDate> dates;
     }
 
     @Getter
@@ -49,6 +50,13 @@ public class DailyStatisticsResponseDto {
         private LocalDate date;
         private Integer steps;
         private List<CallRecordDto> callRecords;
-        private List<Diary> diaries; //diarydto로 바꾸기
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class GetDailyDiaryDto{
+        private List<DiaryResponseDto.GetStatsticsDiaryDto> diaries; //diarydto로 바꾸기
     }
 }
