@@ -7,6 +7,8 @@ import lombok.Getter;
 public class DiaryRequestDto {
 
     private String location;
+    private Double latitude;
+    private Double longitude;
     private String date;
     private String content;
 
@@ -14,6 +16,8 @@ public class DiaryRequestDto {
     public Diary toEntity() {
         return Diary.builder()
                 .location(this.location)
+                .latitude(this.latitude)
+                .longitude(this.longitude)
                 .date(this.date)
                 .content(this.content)
                 .build();
