@@ -10,6 +10,7 @@ public class UserRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Register {
+        private String name;
         private Character sex;
         private Integer height;
         private Integer weight;

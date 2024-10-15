@@ -1,5 +1,7 @@
 package ETA.whats_your_eta.api.config.oauth2;
 
+import ETA.whats_your_eta.api.domain.user.Role;
+import ETA.whats_your_eta.api.domain.user.User;
 import lombok.*;
 
 import java.util.HashMap;
@@ -37,6 +39,7 @@ public class OAuthAttributes {
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
+
     private static OAuthAttributes ofKakao(String provider, String userNameAttributeName, Map<String, Object> attributes) {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> kakaoProfile = (Map<String, Object>) attributes.get("profile");
@@ -50,14 +53,22 @@ public class OAuthAttributes {
                 .build();
     }
 
-    Map<String, Object> convertToMap() {
+    public User toEntity() {
+        return User.builder()
+                .email(email)
+                .name(name)
+                .role(Role.GUEST)
+                .build();
+    }
+
+
+    public Map<String, Object> convertToMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", nameAttributeKey);
         map.put("key", nameAttributeKey);
         map.put("name", name);
         map.put("email", email);
         map.put("provider", provider);
-
         return map;
     }
 }

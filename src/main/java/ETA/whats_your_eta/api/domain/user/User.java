@@ -1,5 +1,6 @@
 package ETA.whats_your_eta.api.domain.user;
 
+import ETA.whats_your_eta.api.domain.user.dto.UserRequestDto;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -28,7 +29,7 @@ public class User implements UserDetails {
     @Column
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -59,18 +60,13 @@ public class User implements UserDetails {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
-    public User update(String name) {
-        this.name = name;
-
-        return this;
-    }
-
     // 현재 사용자가 가진 role에 따른 권한 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority((this.role.getKey())));
+        return Collections.singleton(new SimpleGrantedAuthority(this.role.getKey()));
     }
 
+    // Spring Security가 사용자 인증을 위해 필수로 요구하는 메서드들
     @Override
     public String getPassword() {
         return "";
@@ -78,7 +74,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return String.valueOf(this.id);
+        return this.email; // 이메일을 username으로 사용
     }
 
     @Override
@@ -99,5 +95,15 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.role == Role.USER || this.role == Role.ADMIN;
+    }
+
+    public void updateProfile(UserRequestDto.Register data) {
+        if (data.getName() != null && !data.getName().isEmpty()) { // 정보 업데이트 시 빈 필드이면 업데이트 X
+            this.name = data.getName();
+        }
+        this.sex = data.getSex();
+        this.height = data.getHeight();
+        this.weight = data.getWeight();
+        this.goalLevel = data.getGoalLevel();
     }
 }
