@@ -79,7 +79,7 @@ public class JwtUtil {
     }
 
     // 토큰 검증
-    public boolean verityToken(String token) {
+    public boolean verifyToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
