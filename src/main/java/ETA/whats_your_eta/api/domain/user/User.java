@@ -16,7 +16,6 @@ import java.util.Collections;
 
 @EntityListeners({AuditingEntityListener.class})
 @Getter @Setter
-@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,7 +25,6 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -49,6 +47,7 @@ public class User implements UserDetails {
     @Column(length = 3)
     private Integer weight;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private GoalLevel goalLevel;
 
@@ -70,7 +69,7 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return "";
-    }
+    } // 사용하지 않음
 
     @Override
     public String getUsername() {
@@ -97,13 +96,35 @@ public class User implements UserDetails {
         return this.role == Role.USER || this.role == Role.ADMIN;
     }
 
-    public void updateProfile(UserRequestDto.Register data) {
-        if (data.getName() != null && !data.getName().isEmpty()) { // 정보 업데이트 시 빈 필드이면 업데이트 X
+    public void registerProfile(UserRequestDto.Register data) {
+        // 이름이 입력된 경우만 업데이트
+        if (data.getName() != null && !data.getName().isEmpty()) {
             this.name = data.getName();
         }
+
+        // 필수 필드 업데이트
         this.sex = data.getSex();
         this.height = data.getHeight();
         this.weight = data.getWeight();
         this.goalLevel = data.getGoalLevel();
+    }
+
+    // 사용자 정보 업데이트
+    public void updateProfile(UserRequestDto.Update data) {
+        if (data.getName() != null && !data.getName().isEmpty()) {
+            this.name = data.getName();
+        }
+        if (data.getSex() != null) {
+            this.sex = data.getSex();
+        }
+        if (data.getHeight() != null) {
+            this.height = data.getHeight();
+        }
+        if (data.getWeight() != null) {
+            this.weight = data.getWeight();
+        }
+        if (data.getGoalLevel() != null) {
+            this.goalLevel = data.getGoalLevel();
+        }
     }
 }

@@ -29,13 +29,13 @@ public class JwtUtil {
         secretKey = new SecretKeySpec(byteSecretKey, "HmacSHA256");
     }
 
-    // refreshToken & accessToken 생성
-    public GeneratedToken generateToken(String email, String role) {
-        //String refreshToken = generateRefreshToken(email, role);
-        String accessToken = generateAccessToken(email, role);
-
-        return new GeneratedToken(accessToken);
-    }
+//    // refreshToken & accessToken 생성
+//    public GeneratedToken generateToken(String email, String role) {
+//        //String refreshToken = generateRefreshToken(email, role);
+//        String accessToken = generateAccessToken(email, role);
+//
+//        return new GeneratedToken(accessToken);
+//    }
 
 //    // RefreshToken 발급
 //    public String generateRefreshToken(String email, String role) {

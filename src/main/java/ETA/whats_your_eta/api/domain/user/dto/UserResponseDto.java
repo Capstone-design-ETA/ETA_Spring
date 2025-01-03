@@ -13,6 +13,7 @@ public class UserResponseDto {
     public static class Information {
         private Long id;
         private String name;
+        private String email;
         private Character sex;
         private Integer height;
         private Integer weight;
@@ -22,13 +23,12 @@ public class UserResponseDto {
             return Information.builder()
                     .id(user.getId())
                     .name(user.getName())
+                    .email(user.getEmail())
                     .sex(user.getSex())
                     .height(user.getHeight())
                     .weight(user.getWeight())
                     .goalLevel(user.getGoalLevel())
                     .build();
         }
-
-
     }
 }

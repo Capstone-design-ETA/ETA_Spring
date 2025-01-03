@@ -1,14 +1,11 @@
 package ETA.whats_your_eta.api.config.security;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
-@Builder @ToString
-public class GeneratedToken {
+@Setter
+public class AuthRequestDto {
 
     private String accessToken;
     //private String RefreshToken;
