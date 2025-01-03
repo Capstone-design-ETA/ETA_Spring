@@ -4,6 +4,7 @@ import ETA.whats_your_eta.api.config.oauth2.GoogleTokenVerifier;
 import ETA.whats_your_eta.api.config.security.JwtUtil;
 import ETA.whats_your_eta.api.domain.user.Role;
 import ETA.whats_your_eta.api.domain.user.User;
+import ETA.whats_your_eta.api.domain.user.dto.AuthResponseDto;
 import ETA.whats_your_eta.api.domain.user.dto.UserRequestDto;
 import ETA.whats_your_eta.api.domain.user.dto.UserResponseDto;
 import ETA.whats_your_eta.api.domain.user.repository.UserRepository;
@@ -53,8 +54,7 @@ public class UserService {
     }
 
     @Transactional
-    public String authenticateWithGoogle(String accessToken) {
-
+    public AuthResponseDto authenticateWithGoogle(String accessToken) {
         // Google Access Token 검증 및 사용자 정보 가져오기
         Map<String, Object> googleUserInfo = googleTokenVerifier.getGoogleUserInfo(accessToken);
         String email = (String) googleUserInfo.get("email");
@@ -74,7 +74,8 @@ public class UserService {
 
         String jwt = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().getKey());
         log.info("User logged in: {} with role {}", email, user.getRole().getKey());
-        return jwt;
+
+        return new AuthResponseDto(jwt, "Bearer", user.getRole().getKey());
     }
 
     @Transactional(readOnly = true)
