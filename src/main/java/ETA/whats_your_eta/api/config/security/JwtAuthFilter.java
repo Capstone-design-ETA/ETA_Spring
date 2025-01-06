@@ -19,7 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -32,15 +32,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     // 헤더 값 검증
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader("Authorization");
 
-        // AccessToken 비어 있을 경우 토큰 검사 생략 (모두 허용 URL의 경우 토큰 검사 통과. JwtAuthFilter는 매 요청마다 인증을 수행하기 때문)
-        if (!StringUtils.hasText(accessToken)) {
+        // Authorization 헤더가 없거나 비어 있을 경우 토큰 검사 생략 (모두 허용 URL의 경우 토큰 검사 통과. JwtAuthFilter는 매 요청마다 인증을 수행하기 때문)
+        if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // AccessToken 있을 경우
+        // "Bearer " 제외 실제 토큰만 추출
+        String accessToken = authorizationHeader.substring(7);
+
         // AccessToken을 검증하고, 만료되었을 경우 예외를 발생시킨다.
         if (!jwtUtil.verifyToken(accessToken)) {
             throw new JwtException("Access Token Expired!");
@@ -58,6 +60,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     public Authentication getAuthentication(User user) {
-        return new UsernamePasswordAuthenticationToken(user, "", Arrays.asList(new SimpleGrantedAuthority(user.getRole().getKey())));
+        return new UsernamePasswordAuthenticationToken(
+                user, // 인증 주체 (Principal)
+                "", // 자격 증명 (Credentials). 비밀번호를 사용하는 경우 여기에 저장하지만, JWT 인증에서는 빈 문자열 사용
+                List.of(new SimpleGrantedAuthority(user.getRole().getKey())) // 사용자의 권한 목록 (GrantedAuthorities)
+        );
     }
 }
