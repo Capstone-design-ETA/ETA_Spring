@@ -4,6 +4,7 @@ import ETA.whats_your_eta.api.config.oauth2.GoogleTokenVerifier;
 import ETA.whats_your_eta.api.config.security.JwtUtil;
 import ETA.whats_your_eta.api.domain.user.Role;
 import ETA.whats_your_eta.api.domain.user.User;
+import ETA.whats_your_eta.api.domain.user.dto.AuthResponseDto;
 import ETA.whats_your_eta.api.domain.user.dto.UserRequestDto;
 import ETA.whats_your_eta.api.domain.user.dto.UserResponseDto;
 import ETA.whats_your_eta.api.domain.user.repository.UserRepository;
@@ -37,7 +38,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto.Information register(UserRequestDto.Register data) {
+    public AuthResponseDto register(UserRequestDto.Register data) {
         User user = getCurrentUser();
 
         if (user.getRole() != Role.GUEST) {
@@ -46,15 +47,21 @@ public class UserService {
             );
         }
 
-        user.updateProfile(data);
+        user.registerProfile(data);
         user.setRole(Role.USER);
 
-        return UserResponseDto.Information.of(userRepository.save(user));
+        userRepository.save(user);
+
+        // ROLE 업데이트에 따른 새 JWT 토큰 생성
+        String newJwt = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().getKey());
+
+        log.info("User successfully registered: {}", user.getEmail());
+
+        return new AuthResponseDto(newJwt, "Bearer", user.getRole().getKey());
     }
 
     @Transactional
-    public String authenticateWithGoogle(String accessToken) {
-
+    public AuthResponseDto authenticateWithGoogle(String accessToken) {
         // Google Access Token 검증 및 사용자 정보 가져오기
         Map<String, Object> googleUserInfo = googleTokenVerifier.getGoogleUserInfo(accessToken);
         String email = (String) googleUserInfo.get("email");
@@ -74,7 +81,8 @@ public class UserService {
 
         String jwt = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().getKey());
         log.info("User logged in: {} with role {}", email, user.getRole().getKey());
-        return jwt;
+
+        return new AuthResponseDto(jwt, "Bearer", user.getRole().getKey());
     }
 
     @Transactional(readOnly = true)
@@ -90,4 +98,14 @@ public class UserService {
         return (User) authentication.getPrincipal();
     }
 
+    @Transactional
+    public UserResponseDto.Information updateUserInfo(UserRequestDto.Update data) {
+        User user = getCurrentUser();
+
+        user.updateProfile(data);
+
+        userRepository.save(user);
+
+        return UserResponseDto.Information.of(user);
+    }
 }
