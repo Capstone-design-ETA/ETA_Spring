@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .formLogin().disable() // 폼 기반 로그인 비활성화
                 .httpBasic().disable() // 기본적인 HTTP 인증 방식 비활성화
                 .authorizeHttpRequests()
-                .antMatchers("/api/user/**").permitAll() // 토큰 발급을 위한 경로는 모두 허용하고,
+                .antMatchers("/api/user/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated() // 그 외의 모든 요청은 인증이 필요함
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // JWT 이용한 인증 처리 수행

@@ -1,4 +1,4 @@
-package ETA.whats_your_eta.api.config.security;
+package ETA.whats_your_eta.api.domain.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
