@@ -1,4 +1,4 @@
-package ETA.whats_your_eta.api.config.security;
+package ETA.whats_your_eta.api.security;
 
 import ETA.whats_your_eta.api.domain.user.User;
 import ETA.whats_your_eta.api.domain.user.repository.UserRepository;

@@ -1,4 +1,4 @@
-package ETA.whats_your_eta.api.config.security;
+package ETA.whats_your_eta.api.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

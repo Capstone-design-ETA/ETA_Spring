@@ -1,4 +1,4 @@
-package ETA.whats_your_eta.api.config.oauth2;
+package ETA.whats_your_eta.api.security.oauth2;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;

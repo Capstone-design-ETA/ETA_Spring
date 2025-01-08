@@ -1,7 +1,7 @@
 package ETA.whats_your_eta.api.domain.user.service;
 
-import ETA.whats_your_eta.api.config.oauth2.GoogleTokenVerifier;
-import ETA.whats_your_eta.api.config.security.JwtUtil;
+import ETA.whats_your_eta.api.security.oauth2.GoogleTokenVerifier;
+import ETA.whats_your_eta.api.security.JwtUtil;
 import ETA.whats_your_eta.api.domain.user.Role;
 import ETA.whats_your_eta.api.domain.user.User;
 import ETA.whats_your_eta.api.domain.user.dto.AuthResponseDto;
