@@ -59,7 +59,7 @@ public class DiaryController {
     }
 
     @Operation(summary = "Update an existing diary", description = "Modify the content and/or images of an existing diary.")
-    @PutMapping("/{diaryId}")
+    @PutMapping(value = "/{diaryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateDiary(@PathVariable Long diaryId,
                                              @RequestPart("diaryContent") DiaryRequestDto updateRequestDto,
                                              @RequestPart(value = "image", required = false) List<MultipartFile> images) {
