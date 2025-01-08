@@ -43,7 +43,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // "Bearer " 제외 실제 토큰만 추출
         String accessToken = authorizationHeader.substring(7);
 
-        // AccessToken을 검증하고, 만료되었을 경우 예외를 발생시킨다.
+        // AccessToken을 검증하고, 만료되었을 경우 예외 발생
         if (!jwtUtil.verifyToken(accessToken)) {
             throw new JwtException("Access Token Expired!");
         }

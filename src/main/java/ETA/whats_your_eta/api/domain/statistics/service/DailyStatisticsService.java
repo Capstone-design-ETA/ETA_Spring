@@ -121,14 +121,12 @@ public class DailyStatisticsService {
     /**
      * 일별통계 diary 상세조회
      */
-    public GetDailyDiaryDto getDailyDiarybyDate(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = date.format(formatter); //date 날짜 형식 바꿈
-        List<Diary> diaries = diaryRepository.findByDate(formattedDate);
-        List<DiaryResponseDto.GetStatsticsDiaryDto> getStatsticsDiaryDto = null;
+    public GetDailyDiaryDto getDailyDiaryByDate(LocalDate date) {
+        List<Diary> diaries = diaryRepository.findByDate(date);
+        List<DiaryResponseDto.GetStatisticsDiaryDto> getStatisticsDiaryDto = null;
         for (Diary diary : diaries) {
-            getStatsticsDiaryDto.add(
-                    DiaryResponseDto.GetStatsticsDiaryDto.builder()
+            getStatisticsDiaryDto.add(
+                    DiaryResponseDto.GetStatisticsDiaryDto.builder()
                             .diaryId(diary.getId())
                             .imageUrls(diary.getImages().stream()
                                     .map(Image::getUrl)
@@ -140,7 +138,7 @@ public class DailyStatisticsService {
         }
 
         return GetDailyDiaryDto.builder()
-                .diaries(getStatsticsDiaryDto)
+                .diaries(getStatisticsDiaryDto)
                 .build();
     }
 }

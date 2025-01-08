@@ -7,9 +7,10 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,6 @@ import java.util.List;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder
-@ToString
 public class Diary {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +36,7 @@ public class Diary {
     private Double longitude;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$", message = "날짜 형식(yyyy-MM-dd)에 맞지 않습니다")
-    private String date; // 받아 올 날짜
+    private LocalDate date; // 받아 올 날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -55,8 +54,7 @@ public class Diary {
     private LocalDateTime modifiedAt; // 일기 수정 시각
 
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final List<Image> images = new ArrayList<>();
-
+    private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dailyStatistic_id")

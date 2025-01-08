@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class DiaryService {
                 .collect(Collectors.toList());
     }
 
-    // 현재 사용자가 같은 위치에서 작성한 일기 목록 조회 (최신순)
+    // 현재 사용자가 특정 위치에서 작성한 일기 목록 조회 (최신순)
     @Transactional(readOnly = true)
     public List<DiaryResponseDto.Info> getDiariesByLocation(String location) {
         User user = userService.getCurrentUser();
@@ -74,36 +75,40 @@ public class DiaryService {
 
     // 현재 유저 일기 작성
     @Transactional
-    public void uploadDiary(DiaryRequestDto req, List<String> imgPaths) {
+    public void uploadDiary(DiaryRequestDto req, List<MultipartFile> images) {
         User user = userService.getCurrentUser();
 
         Diary diary = req.toEntity();
         diary.setUser(user);
 
         Diary savedDiary = diaryRepository.save(diary);
-        log.info(String.valueOf(savedDiary));
 
-        if (!imgPaths.isEmpty()) {
-            for (String imgUrl : imgPaths) {
+        int savedImageCount = 0;
+        if (!CollectionUtils.isEmpty(images)) {
+            List<String> imageUrls = s3Service.upload(images);
+
+            for (String imgUrl : imageUrls) {
                 Image image = Image.builder()
                         .url(imgUrl)
                         .diary(savedDiary)
                         .build();
                 imageRepository.save(image);
+                savedImageCount++;
             }
+            log.info("Diary ID: {} created by User ID: {} with {} images", savedDiary.getId(), user.getId(), savedImageCount);
         }
     }
 
     // 현재 유저 일기 수정
     @Transactional
-    public void updateDiary(Long diaryId, DiaryRequestDto req, List<MultipartFile> multipartFiles) {
+    public void updateDiary(Long diaryId, DiaryRequestDto req, List<MultipartFile> images) {
         User user = userService.getCurrentUser();
 
         Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일기가 없습니다. id=" + diaryId));
+                .orElseThrow(() -> new IllegalArgumentException("The diary doesn't exist. Diary ID: " + diaryId));
 
         if (!(diary.getUser().getId().equals(user.getId()))) {
-            throw new IllegalArgumentException("다른 사용자의 일기는 수정할 수 없습니다.");
+            throw new IllegalArgumentException("Can't modify other user's diary.");
         }
 
         // 기존 이미지가 있으면
@@ -123,18 +128,21 @@ public class DiaryService {
         diary.setDate(req.getDate());
         diary.setContent(req.getContent());
 
-        if(multipartFiles != null && !multipartFiles.isEmpty()) {
-        // 새로운 이미지들 s3와 DB에 추가
-        List<String> imgPaths = s3Service.upload(multipartFiles);
+        int savedImageCount = 0;
+        if(!CollectionUtils.isEmpty(images)) {
+            // 새로운 이미지들 s3와 DB에 추가
+            List<String> imageUrls = s3Service.upload(images);
 
-        for (String imgUrl: imgPaths) {
-            Image image = Image.builder()
-                    .url(imgUrl)
-                    .diary(diary)
-                    .build();
-            imageRepository.save(image);
+            for (String imgUrl: imageUrls) {
+                Image image = Image.builder()
+                        .url(imgUrl)
+                        .diary(diary)
+                        .build();
+                imageRepository.save(image);
+                savedImageCount++;
             }
         }
+        log.info("Diary ID: {} updated by User ID: {} with {} images", diaryId, user.getId(), savedImageCount);
     }
 
     // 현재 사용자의 특정 일기 삭제
@@ -143,10 +151,10 @@ public class DiaryService {
         User user = userService.getCurrentUser();
 
         Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new RuntimeException("일기를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("The diary doesn't exist. Diary ID: " + diaryId));
 
         if (!(diary.getUser().getId().equals(user.getId()))) {
-            throw new IllegalArgumentException("다른 사용자의 일기는 수정할 수 없습니다.");
+            throw new IllegalArgumentException("Can't modify other user's diary.");
         }
 
         // 기존의 이미지를 S3에서 삭제
@@ -156,6 +164,7 @@ public class DiaryService {
 
         // 연관된 이미지들도 일기를 지우면 같이 지워짐(DB에서)
         diaryRepository.delete(diary);
-    }
 
+        log.info("User {} deleted diary with ID {}", user.getEmail(), diaryId);
+    }
 }

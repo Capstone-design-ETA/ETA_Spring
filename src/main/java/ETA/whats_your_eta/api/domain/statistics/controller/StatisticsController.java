@@ -56,7 +56,7 @@ public class StatisticsController {
      */
     @GetMapping("/{date}/diary")
     public ResponseEntity<GetDailyDiaryDto> getDailyDiary(@PathVariable LocalDate date) {
-        GetDailyDiaryDto getDailyDiaryDto = dailyStatisticsService.getDailyDiarybyDate(date);
+        GetDailyDiaryDto getDailyDiaryDto = dailyStatisticsService.getDailyDiaryByDate(date);
         return ResponseEntity.ok(getDailyDiaryDto);
     }
 

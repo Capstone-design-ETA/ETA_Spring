@@ -32,7 +32,7 @@ public class UserService {
     public UserResponseDto.Information getMyInfo() {
         return UserResponseDto.Information.of((userRepository.findById(getCurrentUser().getId())).orElseThrow(
                 () -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."
+                        HttpStatus.NOT_FOUND, "User not found."
                 )
         ));
     }
@@ -43,7 +43,7 @@ public class UserService {
 
         if (user.getRole() != Role.GUEST) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "손님 권한을 가진 사람만 회원가입이 가능합니다."
+                    HttpStatus.BAD_REQUEST, "Only those with guest rights can sign up for membership."
             );
         }
 
@@ -91,7 +91,7 @@ public class UserService {
 
         if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
             throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "로그인 되지 않았습니다."
+                    HttpStatus.UNAUTHORIZED, "Login failed."
             );
         }
 

@@ -65,7 +65,7 @@ public class S3Service {
                 s3Client.putObject(new PutObjectRequest(bucket + "/post/image", fileName, inputStream, objectMetadata));
                 imgUrlList.add(s3Client.getUrl(bucket+"/post/image", fileName).toString());
             } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미지 업로드에 실패했습니다.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image upload failed.");
             }
         }
         return imgUrlList;
@@ -87,7 +87,7 @@ public class S3Service {
         fileValidate.add(".PNG");
         String idxFileName = originalFilename.substring(originalFilename.lastIndexOf("."));
         if (!fileValidate.contains(idxFileName)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "지원하지 않는 파일 형식입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported file type.");
         }
         return originalFilename.substring(originalFilename.lastIndexOf("."));
     }
@@ -97,7 +97,7 @@ public class S3Service {
             String fileName = url.substring(url.lastIndexOf("/") + 1);
             s3Client.deleteObject(bucket + "/post/image", fileName);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete the image.");
         }
     }
 }

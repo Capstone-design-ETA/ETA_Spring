@@ -4,6 +4,7 @@ import ETA.whats_your_eta.api.domain.diary.Diary;
 import ETA.whats_your_eta.api.domain.image.Image;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ public class DiaryResponseDto {
         private String location;
         private Double latitude;
         private Double longitude;
-        private String date;
+        private LocalDate date;
         private String userName;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
@@ -48,9 +49,9 @@ public class DiaryResponseDto {
     @Builder
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    static public class GetStatsticsDiaryDto{
+    static public class GetStatisticsDiaryDto{
         private Long diaryId;
-        private String date;
+        private LocalDate date;
         private List<String> imageUrls;
         private String content;
     }

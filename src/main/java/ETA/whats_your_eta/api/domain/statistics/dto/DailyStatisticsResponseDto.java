@@ -57,6 +57,6 @@ public class DailyStatisticsResponseDto {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class GetDailyDiaryDto{
-        private List<DiaryResponseDto.GetStatsticsDiaryDto> diaries; //diarydto로 바꾸기
+        private List<DiaryResponseDto.GetStatisticsDiaryDto> diaries; //diarydto로 바꾸기
     }
 }
